@@ -1,0 +1,235 @@
+{
+  "_version": "1.59.0",
+  "sap.app": {
+    "id": "trav.ust.ns.travelproc",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:lrop",
+      "version": "1.14.2",
+      "toolsId": "3d2bab5d-68db-4f25-bc7a-7500b69a17ef"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/sap/opu/odata4/sap/zust_ns_sb_travel_proc_v4/srvd/sap/zust_ns_travel_sd_prc/0001/",
+        "type": "OData",
+        "settings": {
+          "annotations": [
+            "annotation"
+          ],
+          "localUri": "localService/metadata.xml",
+          "odataVersion": "4.0"
+        }
+      },
+      "annotation": {
+        "type": "ODataAnnotation",
+        "uri": "annotations/annotation.xml",
+        "settings": {
+          "localUri": "annotations/annotation.xml"
+        }
+      }
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "Travel-processor": {
+          "semanticObject": "Travel",
+          "action": "processor",
+          "title": "{{flpTitle}}",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.121.6",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.ushell": {},
+        "sap.fe.templates": {},
+        "sap.f": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "trav.ust.ns.travelproc.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "@i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "uri": "i18n/i18n.properties"
+      }
+    },
+    "resources": {
+      "css": []
+    },
+    "routing": {
+      "config": {
+        "flexibleColumnLayout": {
+          "defaultTwoColumnLayoutType": "TwoColumnsMidExpanded",
+          "defaultThreeColumnLayoutType": "ThreeColumnsMidExpanded"
+        },
+        "routerClass": "sap.f.routing.Router"
+      },
+      "routes": [
+        {
+          "pattern": ":?query:",
+          "name": "TravelList",
+          "target": [
+            "TravelList"
+          ]
+        },
+        {
+          "pattern": "Travel({key}):?query:",
+          "name": "TravelObjectPage",
+          "target": [
+            "TravelList",
+            "TravelObjectPage"
+          ]
+        },
+        {
+          "pattern": "Travel({key})/_Booking({key2}):?query:",
+          "name": "BookingObjectPage",
+          "target": [
+            "TravelList",
+            "TravelObjectPage",
+            "BookingObjectPage"
+          ]
+        }
+      ],
+      "targets": {
+        "TravelList": {
+          "type": "Component",
+          "id": "TravelList",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "contextPath": "/Travel",
+              "variantManagement": "Page",
+              "navigation": {
+                "Travel": {
+                  "detail": {
+                    "route": "TravelObjectPage"
+                  }
+                }
+              },
+              "controlConfiguration": {
+                "@com.sap.vocabularies.UI.v1.LineItem": {
+                  "tableSettings": {
+                    "type": "ResponsiveTable"
+                  }
+                }
+              },
+              "initialLoad": "Enabled"
+            }
+          },
+          "controlAggregation": "beginColumnPages",
+          "contextPattern": ""
+        },
+        "TravelObjectPage": {
+          "type": "Component",
+          "id": "TravelObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "editableHeaderContent": false,
+              "contextPath": "/Travel",
+              "navigation": {
+                "_Booking": {
+                  "detail": {
+                    "route": "BookingObjectPage"
+                  }
+                }
+              },
+              "content": {
+                "body": {
+                  "sections": {
+                    "Geomap": {
+                      "template": "trav.ust.ns.travelproc.ext.fragment.Geomap",
+                      "position": {
+                        "placement": "After",
+                        "anchor": "_Booking::LineItem"
+                      },
+                      "title": "Itinerary"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "controlAggregation": "midColumnPages",
+          "contextPattern": "/Travel({key})"
+        },
+        "BookingObjectPage": {
+          "type": "Component",
+          "id": "BookingObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "editableHeaderContent": false,
+              "contextPath": "/Travel/_Booking"
+            }
+          },
+          "controlAggregation": "endColumnPages",
+          "contextPattern": "/Travel({key})/_Booking({key2})"
+        }
+      }
+    },
+    "rootView": {
+      "viewName": "sap.fe.templates.RootContainer.view.Fcl",
+      "type": "XML",
+      "async": true,
+      "id": "appRootView"
+    }
+  },
+  "sap.fiori": {
+    "registrationIds": [],
+    "archeType": "transactional"
+  },
+  "sap.cloud": {
+    "public": true,
+    "service": "travustnstravelproc"
+  }
+}

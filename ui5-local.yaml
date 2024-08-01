@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=https://sap.github.io/ui5-tooling/schema/ui5.yaml.json
+
+specVersion: "3.1"
+metadata:
+  name: trav.ust.ns.travelproc
+type: application
+framework:
+  name: SAPUI5
+  version: 1.121.6
+  libraries:
+    - name: sap.m
+    - name: sap.ui.core
+    - name: sap.ushell
+    - name: sap.fe.templates
+    - name: themelib_sap_horizon
+server:
+  customMiddleware:
+    - name: fiori-tools-appreload
+      afterMiddleware: compression
+      configuration:
+        port: 35729
+        path: webapp
+        delay: 300
+    - name: fiori-tools-proxy
+      afterMiddleware: compression
+      configuration:
+        ignoreCertError: false # If set to true, certificate errors will be ignored. E.g. self-signed certificates will be accepted
+        backend:
+          - path: /sap
+            url: https://1374dadc-372f-46e3-a692-b2bd57ae0ee4.abap.us10.hana.ondemand.com
+            destination: abap-cloud-default_abap-trial-1e6adb04trial-dev
+    - name: sap-fe-mockserver
+      beforeMiddleware: csp
+      configuration:
+        mountPath: /
+        services:
+          - urlPath: /sap/opu/odata4/sap/zust_ns_sb_travel_proc_v4/srvd/sap/zust_ns_travel_sd_prc/0001
+            metadataPath: ./webapp/localService/metadata.xml
+            mockdataPath: ./webapp/localService/data
+            generateMockData: true
+        annotations: []
+    - name: fiori-tools-preview
+      afterMiddleware: fiori-tools-appreload
+      configuration:
+        component: trav.ust.ns.travelproc
+        ui5Theme: sap_horizon
